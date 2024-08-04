@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(FindVibeDbContext))]
-    [Migration("20240802192533_initial")]
+    [Migration("20240804171811_initial")]
     partial class initial
     {
         /// <inheritdoc />

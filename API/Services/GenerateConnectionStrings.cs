@@ -4,26 +4,18 @@ public static class GenerateConnectionStrings
 {
     public static string GetConnectionString(IConfiguration configuration)
     {
-        var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-        if (string.IsNullOrEmpty(connUrl))
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        if (env == "Development")
         {
-            connUrl = configuration["DATABASE_URL"];
+            return configuration.GetConnectionString("DefaultConnection");
         }
-
-        Console.WriteLine(connUrl);
-
-        // Parse connection URL to connection string for Npgsql
-        connUrl = connUrl.Replace("postgres://", string.Empty);
-        var pgUserPass = connUrl.Split('@')[0];
-        var pgHostPortDb = connUrl.Split('@')[1];
-        var pgHostPort = pgHostPortDb.Split('/')[0];
-        var pgDb = pgHostPortDb.Split('/')[1];
-        var pgUser = pgUserPass.Split(':')[0];
-        var pgPass = pgUserPass.Split(':')[1];
-        var pgHost = pgHostPort.Split(':')[0];
-        var pgPort = pgHostPort.Split(':')[1];
+        var connUrl = configuration["DATABASE_URL"];
         
-        return
-            $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
+        var pgHost = configuration["PGHost"];
+        var pgDatabase = configuration["PGDatabase"];
+        var pgUser = configuration["PGUser"];
+        var pgPass = configuration["PGPassword"];
+        var pgPort = configuration["PGPort"];
+        return $"Server={pgHost};Port={pgPort};Database={pgDatabase};Userid={pgUser};Password={pgPass};Protocol=3;SSL=true;SslMode=Require;";
     }
 }
