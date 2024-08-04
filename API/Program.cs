@@ -1,5 +1,8 @@
+using API.Services;
 using Application;
 using Infrastructure;
+using Infrastructure.Common.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -10,21 +13,29 @@ var builder = WebApplication.CreateBuilder(args);
     });
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
-    builder.Services.AddApplication().AddInfrastructure(builder.Configuration.GetConnectionString("DefaultConnection"));
+    
+    var connectionString = GenerateConnectionStrings.GetConnectionString(builder.Configuration);
+    Console.WriteLine(connectionString);
+    builder.Services.AddApplication().AddInfrastructure(builder.Configuration.GetConnectionString(connectionString));
     builder.Services.AddCors(options =>
     {
         options.AddDefaultPolicy(builder =>
         {
             builder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
         });
     });
 }
 
 var app = builder.Build();
 {
+    var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<FindVibeDbContext>();
+    await context.Database.MigrateAsync();
+
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
