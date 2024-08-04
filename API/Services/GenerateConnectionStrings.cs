@@ -4,12 +4,21 @@ public static class GenerateConnectionStrings
 {
     public static string GetConnectionString(IConfiguration configuration)
     {
-        var host = configuration["DBHost"];
-        var port = configuration["PortDB"];
-        var database = configuration["Database"];
-        var username = configuration["DbUser"];
-        var password = configuration["Password"];
-        //Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb}; SSL Mode=Require; Trust Server Certificate=true
-     return $"Server={host};Port={port};User Id={username};Password={password};Database={database}; SSL Mode=Require; Trust Server Certificate=true";
+        // Use connection string provided at runtime by Heroku.
+        var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+        // Parse connection URL to connection string for Npgsql
+        connUrl = connUrl.Replace("postgres://", string.Empty);
+        var pgUserPass = connUrl.Split("@")[0];
+        var pgHostPortDb = connUrl.Split("@")[1];
+        var pgHostPort = pgHostPortDb.Split("/")[0];
+        var pgDb = pgHostPortDb.Split("/")[1];
+        var pgUser = pgUserPass.Split(":")[0];
+        var pgPass = pgUserPass.Split(":")[1];
+        var pgHost = pgHostPort.Split(":")[0];
+        var pgPort = pgHostPort.Split(":")[1];
+        
+        return
+            $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb}; SSL Mode=Require; Trust Server Certificate=true";
     }
 }
