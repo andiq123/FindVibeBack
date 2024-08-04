@@ -16,6 +16,6 @@ public static class GenerateConnectionStrings
         var pgUser = configuration["PGUser"];
         var pgPass = configuration["PGPassword"];
         var pgPort = configuration["PGPort"];
-        return $"Server={pgHost};Port={pgPort};Database={pgDatabase};Userid={pgUser};Password={pgPass};SSL=true;SslMode=Require;";
+        return $"Server={pgHost};Port={pgPort};Database={pgDatabase};Userid={pgUser};Password={pgPass};";
     }
 }
