@@ -9,6 +9,7 @@ public static class GenerateConnectionStrings
         var database = configuration["Database"];
         var username = configuration["DbUser"];
         var password = configuration["Password"];
-        return $"Host={host};Port={port};Username={username};Password={password};Database={database};";
+        //Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb}; SSL Mode=Require; Trust Server Certificate=true
+     return $"Server={host};Port={port};User Id={username};Password={password};Database={database}; SSL Mode=Require; Trust Server Certificate=true";
     }
 }
