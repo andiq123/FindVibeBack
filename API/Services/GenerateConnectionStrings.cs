@@ -5,7 +5,7 @@ public static class GenerateConnectionStrings
     public static string GetConnectionString(IConfiguration configuration)
     {
         var host = configuration["DBHost"];
-        var port = configuration["Port"];
+        var port = configuration["PortDB"];
         var database = configuration["Database"];
         var username = configuration["DbUser"];
         var password = configuration["Password"];
