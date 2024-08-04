@@ -16,7 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
     
     var connectionString = GenerateConnectionStrings.GetConnectionString(builder.Configuration);
     Console.WriteLine(connectionString);
-    builder.Services.AddApplication().AddInfrastructure(builder.Configuration.GetConnectionString(connectionString));
+    var internalDb = builder.Configuration["InternalPost"];
+    builder.Services.AddApplication().AddInfrastructure(builder.Configuration.GetConnectionString(internalDb));
     builder.Services.AddCors(options =>
     {
         options.AddDefaultPolicy(builder =>
