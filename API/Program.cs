@@ -15,7 +15,6 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSwaggerGen();
     
     var connectionString = GenerateConnectionStrings.GetConnectionString(builder.Configuration);
-    Console.WriteLine(connectionString);
     builder.Services.AddApplication().AddInfrastructure(connectionString);
     builder.Services.AddCors(options =>
     {
