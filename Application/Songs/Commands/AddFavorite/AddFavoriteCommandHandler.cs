@@ -12,7 +12,7 @@ public class AddFavoriteCommandHandler(
     {
         var song = new Song
         {
-            Id = request.Id,
+            Id = Guid.NewGuid(),
             Title = request.Title,
             Artist = request.Artist,
             Image = request.Image,

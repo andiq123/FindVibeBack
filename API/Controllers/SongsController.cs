@@ -35,8 +35,7 @@ public class SongsController(ISender mediator) : ApiController
     [HttpPost("add-favorite")]
     public async Task<IActionResult> AddSongToFavorite([FromBody] AddToFavoriteRequest request)
     {
-        var addFavoriteCommand = new AddFavoriteCommand(request.Title, request.Artist, request.Image, request.Link,
-            request.Id, request.UserId);
+        var addFavoriteCommand = new AddFavoriteCommand(request.Title, request.Artist, request.Image, request.Link, request.UserId);
         await mediator.Send(addFavoriteCommand);
         return Ok();
     }
