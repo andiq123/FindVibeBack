@@ -17,6 +17,7 @@ public class AddFavoriteCommandHandler(
             Artist = request.Artist,
             Image = request.Image,
             Link = request.Link,
+            Order = request.Order,
             UserId = request.UserId
         };
         await songsRepository.AddSongToUserAsync(song);

@@ -1,4 +1,5 @@
 using Application.Common;
+using Application.Songs.Commands.Reorder;
 using Domain.Songs;
 using Infrastructure.Common.Persistence;
 using Infrastructure.Songs.Services;
@@ -36,5 +37,15 @@ public class SongsRepository(
     {
         var song = await context.Songs.FindAsync(songId);
         if (song != null) context.Songs.Remove(song);
+    }
+
+    public async Task ReorderSongsAsync(IList<Reorder> reorders)
+    {
+        foreach (var reorder in reorders)
+        {
+            var song = await context.Songs.FindAsync(reorder.SongId);
+            if (song == null) continue;
+            song.Order = reorder.Order;
+        }
     }
 }

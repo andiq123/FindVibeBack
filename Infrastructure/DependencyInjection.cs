@@ -2,7 +2,7 @@ using Application.Common;
 using Infrastructure.Common.Persistence;
 using Infrastructure.Songs.Persistence;
 using Infrastructure.Songs.Services;
-using Infrastructure.Streams.Services;
+
 using Infrastructure.Suggestions.Persistence;
 using Infrastructure.Suggestions.Services;
 using Infrastructure.Users.Persistence;
@@ -18,7 +18,6 @@ public static class DependencyInjection
         services.AddDbContext<FindVibeDbContext>(options => { options.UseNpgsql(connectionString); });
         services.AddHttpClient<SongsScrapperService>();
         services.AddHttpClient<SuggestionsService>();
-        services.AddHttpClient<StreamsService>();
         services.AddScoped<ISongsRepository, SongsRepository>();
         services.AddScoped<ISuggestionsRepository, SuggestionsRepository>();
         services.AddScoped<IUserRepository, UserRepository>();

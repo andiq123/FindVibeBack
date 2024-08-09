@@ -1,6 +1,7 @@
 using API.Songs;
 using Application.Songs.Commands.AddFavorite;
 using Application.Songs.Commands.RemoveFavorite;
+using Application.Songs.Commands.Reorder;
 using Application.Songs.Queries.ListSongs;
 using Application.Songs.Queries.ListSongsForUser;
 using Domain.Songs;
@@ -31,11 +32,19 @@ public class SongsController(ISender mediator) : ApiController
             favoriteSongs => Ok(new SongsResponse(mapSongDto(favoriteSongs))),
             error => NotFound(error.Description));
     }
+    
+    [HttpPost("reorder")]
+    public async Task<IActionResult> ReorderSongs([FromBody] ReorderRequest request)
+    {
+        var reorderCommand = new ReorderCommand(request.Reorders);
+        await mediator.Send(reorderCommand);
+        return Ok();
+    }
 
     [HttpPost("add-favorite")]
     public async Task<IActionResult> AddSongToFavorite([FromBody] AddToFavoriteRequest request)
     {
-        var addFavoriteCommand = new AddFavoriteCommand(request.Title, request.Artist, request.Image, request.Link, request.UserId);
+        var addFavoriteCommand = new AddFavoriteCommand(request.Title, request.Artist, request.Image, request.Link, request.Order, request.UserId);
         await mediator.Send(addFavoriteCommand);
         return Ok();
     }
@@ -56,6 +65,7 @@ public class SongsController(ISender mediator) : ApiController
             Title = x.Title,
             Artist = x.Artist,
             Image = x.Image,
+            Order = x.Order,
             Link = x.Link
         }).ToList();
     }

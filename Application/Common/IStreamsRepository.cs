@@ -2,5 +2,5 @@ namespace Application.Common;
 
 public interface IStreamsRepository
 {
-    Task<string> GetStream(string songLink);
+    Task<string> GetStream(string websiteLink);
 }

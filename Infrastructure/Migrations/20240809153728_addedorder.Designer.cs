@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(FindVibeDbContext))]
-    [Migration("20240804171811_initial")]
-    partial class initial
+    [Migration("20240809153728_addedorder")]
+    partial class addedorder
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,6 +42,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Link")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
