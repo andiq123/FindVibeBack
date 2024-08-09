@@ -18,9 +18,9 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddApplication().AddInfrastructure(connectionString);
     builder.Services.AddCors(options =>
     {
-        options.AddDefaultPolicy(builder =>
+        options.AddDefaultPolicy(corsPolicyBuilder =>
         {
-            builder
+            corsPolicyBuilder
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader();
