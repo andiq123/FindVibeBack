@@ -1,30 +1,35 @@
-using System.Xml;
+using System.Text.Json;
 using Domain.Suggestions;
 
 namespace Infrastructure.Suggestions.Services;
-
 public class SuggestionsService(HttpClient httpClient)
 {
-    private const string BaseUrl = "https://suggestqueries.google.com/complete/search?output=toolbar&ds=yt&q=";
+    private const string BaseUrl = "https://clients1.google.com/complete/search?client=youtube&gs_ri=youtube&ds=yt&q=";
 
 
     public async Task<IReadOnlyList<Suggestion>> GetSuggestions(string searchQuery)
     {
         var fullLink = BaseUrl + searchQuery;
         var response = await httpClient.GetStringAsync(fullLink);
+        var results = ParseGoogleResponse(response);
         
-        XmlDocument _xmlDocument = new XmlDocument();
-        _xmlDocument.LoadXml(response);
+        return results.Select(result => new Suggestion(result)).ToList();
+    }
 
-        var suggestions = _xmlDocument.SelectNodes("//CompleteSuggestion/suggestion");
+    private IList<string> ParseGoogleResponse(string input)
+    {
+        var startIndex = input.IndexOf('[');
+        var endIndex = input.LastIndexOf(']');
 
-        var suggestionsList = new List<Suggestion>();
-        foreach (XmlNode suggestion in suggestions!)
+        if (startIndex == -1 || endIndex == -1)
         {
-            var suggestionModel = new Suggestion(suggestion.Attributes!["data"]!.Value);
-            suggestionsList.Add(suggestionModel);
+            return null;
         }
 
-        return suggestionsList;
+        var jsonString = input.Substring(startIndex, endIndex - startIndex + 1);
+        var parsedArray = JsonSerializer.Deserialize<List<JsonElement>>(jsonString);
+
+        return parsedArray[1].EnumerateArray().Select(item => item[0].GetString()).ToArray();
     }
 }
+
