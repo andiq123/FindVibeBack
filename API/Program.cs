@@ -1,7 +1,9 @@
+using API.Hubs;
 using API.Services;
 using Application;
 using Infrastructure;
 using Infrastructure.Common.Persistence;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,10 +23,15 @@ var builder = WebApplication.CreateBuilder(args);
         options.AddDefaultPolicy(corsPolicyBuilder =>
         {
             corsPolicyBuilder
-                .AllowAnyOrigin()
+                .WithOrigins(builder.Configuration["FrontURL"] ?? string.Empty)
                 .AllowAnyMethod()
-                .AllowAnyHeader();
+                .AllowAnyHeader().AllowCredentials();
         });
+    });
+
+    builder.Services.AddSignalR(options =>
+    {
+        options.EnableDetailedErrors = true;
     });
 }
 
@@ -45,6 +52,8 @@ var app = builder.Build();
     app.UseHttpsRedirection();
     app.UseAuthorization();
     app.MapControllers();
+
+    app.MapHub<PlayerHub>("/player");
 
     await app.RunAsync();
 }
