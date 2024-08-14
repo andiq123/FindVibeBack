@@ -25,6 +25,7 @@ public class PlayerHub : Hub
     {
         var callerId = Context.ConnectionId;
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+        _lastSongs.Remove(groupName);
         await Clients.GroupExcept(groupName, callerId).SendAsync("OtherSessionDisconnected", callerId);
     }
 
