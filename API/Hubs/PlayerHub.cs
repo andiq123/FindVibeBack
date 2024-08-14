@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using API.Songs;
 using Microsoft.AspNetCore.SignalR;
 
@@ -27,10 +28,14 @@ public class PlayerHub : Hub
         await Clients.GroupExcept(groupName, callerId).SendAsync("OtherSessionDisconnected", callerId);
     }
 
-    public async Task UpdateTime(string time, string groupName)
+    public async Task UpdateTime(string time, bool isSynced, string groupName)
     {
         var callerId = Context.ConnectionId;
-        await Clients.GroupExcept(groupName, callerId).SendAsync("UpdateTime", time);
+        if (isSynced)
+        {
+            await Clients.Caller.SendAsync("UpdateTime", time, isSynced);
+        }
+        await Clients.GroupExcept(groupName, callerId).SendAsync("UpdateTime", time, isSynced);
     }
 
     public async Task SetSong(SongDto songDto, string groupName)
