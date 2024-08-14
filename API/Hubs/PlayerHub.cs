@@ -5,10 +5,18 @@ namespace API.Hubs;
 
 public class PlayerHub : Hub
 {
+    private static Dictionary<string, SongDto> _lastSongs = new();
+
     public async Task Connect(string groupName)
     {
         var callerId = Context.ConnectionId;
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+
+        if (_lastSongs.TryGetValue(groupName, out var song))
+        {
+            await Clients.Caller.SendAsync("SetSong", song);
+        }
+
         await Clients.GroupExcept(groupName, callerId).SendAsync("OtherSessionConnected", callerId);
     }
 
@@ -18,7 +26,7 @@ public class PlayerHub : Hub
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
         await Clients.GroupExcept(groupName, callerId).SendAsync("OtherSessionDisconnected", callerId);
     }
-    
+
     public async Task UpdateTime(string time, string groupName)
     {
         var callerId = Context.ConnectionId;
@@ -28,6 +36,7 @@ public class PlayerHub : Hub
     public async Task SetSong(SongDto songDto, string groupName)
     {
         var callerId = Context.ConnectionId;
+        _lastSongs[groupName] = songDto;
         await Clients.GroupExcept(groupName, callerId).SendAsync("SetSong", songDto);
     }
 
