@@ -22,7 +22,8 @@ public class PlayerHub : Hub
 
         if (_sessions.TryGetValue(groupName, out var sessions))
         {
-            sessions.Add(new Session(){
+            sessions.Add(new Session()
+            {
                 ConnectionId = callerId,
                 IsSelected = false
             });
@@ -31,7 +32,7 @@ public class PlayerHub : Hub
         {
             _sessions.Add(groupName, new List<Session>());
         }
-        
+
         await Clients.Group(groupName).SendAsync("OtherSessionConnected", _sessions[groupName]);
         if (_lastSong.TryGetValue(groupName, out var lastSong))
         {
@@ -51,15 +52,15 @@ public class PlayerHub : Hub
             var session = sessions.First(x => x.ConnectionId == callerId);
             sessions.Remove(session);
         }
-        
+
         await Clients.GroupExcept(groupName, callerId).SendAsync("OtherSessionDisconnected", _sessions[groupName]);
     }
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
-       var session = _sessions.FirstOrDefault().Value.First(x => x.ConnectionId == Context.ConnectionId);
-       _sessions.FirstOrDefault().Value.Remove(session);
-       await base.OnDisconnectedAsync(exception);
+        var session = _sessions.FirstOrDefault().Value.First(x => x.ConnectionId == Context.ConnectionId);
+        _sessions.FirstOrDefault().Value.Remove(session);
+        await base.OnDisconnectedAsync(exception);
     }
 
     // public async Task SelectSession(string groupName)
@@ -78,7 +79,15 @@ public class PlayerHub : Hub
     public async Task SetSong(Song song, string groupName)
     {
         var callerId = Context.ConnectionId;
-        _lastSong.Add(groupName, song);
+        if (_lastSong.TryGetValue(groupName, out var lastSong))
+        {
+            _lastSong[groupName] = song;
+        }
+        else
+        {
+            _lastSong.Add(groupName, song);
+        }
+
         await Clients.GroupExcept(groupName, callerId).SendAsync("SetSong", song);
     }
 
