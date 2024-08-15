@@ -55,6 +55,13 @@ public class PlayerHub : Hub
         await Clients.GroupExcept(groupName, callerId).SendAsync("OtherSessionDisconnected", _sessions[groupName]);
     }
 
+    public override async Task OnDisconnectedAsync(Exception exception)
+    {
+       var session = _sessions.FirstOrDefault().Value.First(x => x.ConnectionId == Context.ConnectionId);
+       _sessions.FirstOrDefault().Value.Remove(session);
+       await base.OnDisconnectedAsync(exception);
+    }
+
     // public async Task SelectSession(string groupName)
     // {
     //     _sessionLists[groupName].Sessions.First(x => x.ConnectionId == Context.ConnectionId).IsSelected = true;
