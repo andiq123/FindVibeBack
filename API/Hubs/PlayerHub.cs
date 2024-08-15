@@ -29,15 +29,10 @@ public class PlayerHub : Hub
         await Clients.GroupExcept(groupName, callerId).SendAsync("OtherSessionDisconnected", callerId);
     }
 
-    public async Task UpdateTime(string time, string groupName)
+    public async Task UpdateTime(string time, Int64 startTimeInMs, string groupName)
     {
         var callerId = Context.ConnectionId;
-        await Clients.GroupExcept(groupName, callerId).SendAsync("UpdateTime", time);
-    }
-
-    public async Task SyncTime(string groupName)
-    {
-        await Clients.Group(groupName).SendAsync("SyncTime");
+        await Clients.GroupExcept(groupName, callerId).SendAsync("UpdateTime", time, startTimeInMs);
     }
 
     public async Task SetSong(SongDto songDto, string groupName)
