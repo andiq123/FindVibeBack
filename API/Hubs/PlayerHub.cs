@@ -70,10 +70,10 @@ public class PlayerHub : Hub
     //         .SendAsync("SelectSession", _sessionLists[groupName].Sessions);
     // }
 
-    public async Task UpdateTime(string time, Int64 startTimeInMs, string groupName)
+    public async Task UpdateTime(string time, string groupName)
     {
         var callerId = Context.ConnectionId;
-        await Clients.GroupExcept(groupName, callerId).SendAsync("UpdateTime", time, startTimeInMs);
+        await Clients.GroupExcept(groupName, callerId).SendAsync("UpdateTime", time);
     }
 
     public async Task SetSong(Song song, string groupName)
